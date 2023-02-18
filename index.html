@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drag and Drop Elements</title>
+
+    <style>
+      .container {
+        display: flex;
+        justify-content: flex-start;
+      }
+      .container .element {
+        width: 100px;
+        height: 100px;
+        border-radius: 50px;
+        margin: 5px;
+      }
+      #drag-element {
+        width: 100px;
+        height: 100px;
+        background-color: rgb(60, 60, 150);
+        color: white;
+        text-align: center;
+        line-height: 100px;
+      }
+
+      #drop-element {
+        width: 200px;
+        height: 200px;
+        background-color: rgb(158, 71, 71);
+        color: white;
+        text-align: center;
+        line-height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="element" style="background: red"></div>
+      <div class="element" style="background: yellow"></div>
+      <div class="element" style="background: green"></div>
+      <div class="element" style="background: blue"></div>
+    </div>
+    <div id="drag-element" draggable="true">Drag me</div>
+    <div id="drop-element">Drop here</div>
+
+    <script>
+      var chooseElement;
+
+      const move = function (element) {
+        const elements = document.querySelectorAll(".element");
+
+        elements.forEach((element) => {
+          element.addEventListener("mousedown", () => {
+            element.style.position = "absolute";
+            chooseElement = element;
+
+            document.onmousemove = (e) => {
+              var x = e.pageX;
+              var y = e.pageY;
+
+              chooseElement.style.left = x - 50 + "px";
+              chooseElement.style.top = y - 50 + "px";
+
+              console.log(chooseElement);
+            };
+          });
+        });
+        document.onmouseup = function (e) {
+          chooseElement = null;
+        };
+      };
+
+      var dragElement = document.getElementById("drag-element");
+      var dropElement = document.getElementById("drop-element");
+
+      dragElement.addEventListener("dragstart", function (event) {
+        event.dataTransfer.setData("text/plain", event.target.id);
+      });
+
+      dropElement.addEventListener("dragover", function (event) {
+        event.preventDefault();
+        dropElement.style.backgroundColor = "green";
+      });
+
+      dropElement.addEventListener("dragleave", function (event) {
+        dropElement.style.backgroundColor = "rgb(158, 71, 71)";
+      });
+
+      dropElement.addEventListener("drop", function (event) {
+        event.preventDefault();
+        var data = event.dataTransfer.getData("text/plain");
+        var draggedElement = document.getElementById(data);
+        dropElement.appendChild(draggedElement);
+        dropElement.style.backgroundColor = "rgb(158, 71, 71)";
+      });
+
+      move();
+    </script>
+  </body>
+</html>
